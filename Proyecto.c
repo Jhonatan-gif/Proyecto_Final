@@ -18,17 +18,19 @@ int main() {
     int turnoActual = 0;
     int opcion;
 
+    FILE *archivo; // Variable para el archivo
+
     while (1) {
         printf("Turno actual: ");
         if (turnoActual == 0) {
-            printf("Manana (7:00-15:00)\n");
+            printf("Mañana (7:00-15:00)\n");
         } else if (turnoActual == 1) {
             printf("Tarde (15:00-23:00)\n");
         } else if (turnoActual == 2) {
             printf("Noche (23:00-7:00)\n");
         }
 
-        printf("Seleccione una opcion:\n");
+        printf("Seleccione una opción:\n");
         printf("1. Ingresar datos de costos\n");
         printf("2. Cambio de turno\n");
         printf("3. Ver turno con menos desperdicio de material\n");
@@ -48,13 +50,25 @@ int main() {
                 scanf("%f", &turnos[turnoActual].productos[turnos[turnoActual].cantidadProductos].costo);
 
                 turnos[turnoActual].cantidadProductos++;
+
+                // Guardar los datos en el archivo
+                archivo = fopen("inventario.txt", "a"); 
+                if (archivo == NULL) {
+                    printf("Error al abrir el archivo.\n");
+                    exit(1);
+                }
+
+                fprintf(archivo, "%d %s %s %.2f\n", turnos[turnoActual].productos[turnos[turnoActual].cantidadProductos - 1].codigo,
+                        turnos[turnoActual].productos[turnos[turnoActual].cantidadProductos - 1].nombre,
+                        turnos[turnoActual].productos[turnos[turnoActual].cantidadProductos - 1].marca,
+                        turnos[turnoActual].productos[turnos[turnoActual].cantidadProductos - 1].costo);
+
+                fclose(archivo); 
                 break;
             case 2:
-                // Cambio de turno
                 turnoActual = (turnoActual + 1) % 3;
                 break;
             case 3:
-                
                 int turnoMenosDesperdicio = 0;
                 float menorDesperdicio = turnos[0].productos[0].costo;
                 for (int i = 1; i < 3; i++) {
@@ -70,7 +84,7 @@ int main() {
 
                 printf("El turno con menos desperdicio de material es: ");
                 if (turnoMenosDesperdicio == 0) {
-                    printf("Manana (7:00-15:00)\n");
+                    printf("Mañana (7:00-15:00)\n");
                 } else if (turnoMenosDesperdicio == 1) {
                     printf("Tarde (15:00-23:00)\n");
                 } else if (turnoMenosDesperdicio == 2) {
